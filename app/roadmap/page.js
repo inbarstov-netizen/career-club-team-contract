@@ -1,7 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 const roadmapSections = [
   {
@@ -10,18 +12,9 @@ const roadmapSections = [
     estimate: "⏱️ כאן הזינו הערכת זמן כוללת לשלב זה",
     color: "from-indigo-500 to-violet-500",
     items: [
-      {
-        label: "כאן הגדירו ידע בסיסי שכל חברי הצוות חייבים לחלוק",
-        time: "טווח זמן משוער",
-      },
-      {
-        label: "כאן הגדירו הבנה בסיסית של התחום או המערכת",
-        time: "טווח זמן משוער",
-      },
-      {
-        label: "כאן סמנו פערים קריטיים שחייבים להיסגר מוקדם",
-        time: "טווח זמן משוער",
-      },
+      { label: "כאן הגדירו ידע בסיסי שכל חברי הצוות חייבים לחלוק", time: "טווח זמן משוער" },
+      { label: "כאן הגדירו הבנה בסיסית של התחום או המערכת", time: "טווח זמן משוער" },
+      { label: "כאן סמנו פערים קריטיים שחייבים להיסגר מוקדם", time: "טווח זמן משוער" },
     ],
   },
   {
@@ -30,47 +23,22 @@ const roadmapSections = [
     estimate: "⏱️ כאן הזינו הערכת זמן כוללת לשלב זה",
     color: "from-emerald-500 to-teal-500",
     items: [
-      {
-        label: "כאן הגדירו איך הצוות עובד יחד ביום־יום",
-        time: "טווח זמן משוער",
-      },
-      {
-        label: "כאן הגדירו תהליכי משוב, שיתוף וקבלת החלטות",
-        time: "טווח זמן משוער",
-      },
-      {
-        label: "כאן הגדירו כלי תקשורת וניהול עבודה",
-        time: "טווח זמן משוער",
-      },
+      { label: "כאן הגדירו איך הצוות עובד יחד ביום־יום", time: "טווח זמן משוער" },
+      { label: "כאן הגדירו תהליכי משוב, שיתוף וקבלת החלטות", time: "טווח זמן משוער" },
+      { label: "כאן הגדירו כלי תקשורת וניהול עבודה", time: "טווח זמן משוער" },
     ],
   },
   {
     id: "professional",
-    title:
-      "Milestone 3 – Projects & Professional Level | פרוייקטים מעשיים & רמה מקצועית",
+    title: "Milestone 3 – Projects & Professional Level | פרוייקטים מעשיים & רמה מקצועית",
     estimate: "⏱️ כאן הזינו הערכת זמן כוללת לשלב זה",
     color: "from-fuchsia-500 to-pink-500",
     items: [
-      {
-        label: "כאן הגדירו פרויקט מעשי קטן שתרצו להתנסות בו",
-        time: "טווח זמן משוער",
-      },
-      {
-        label: "כאן הגדירו פרויקט מעשי בינוני שתרצו להתנסות בו",
-        time: "טווח זמן משוער",
-      },
-      {
-        label: "אילו בעיות מופיעות כשהמערכת גדלה",
-        time: "טווח זמן משוער",
-      },
-      {
-        label: "עקרונות בסיסיים של ביצועים ויציבות",
-        time: "טווח זמן משוער",
-      },
-      {
-        label: "Trade-offs בין פשטות, סקייל ותחזוקה",
-        time: "טווח זמן משוער",
-      },
+      { label: "כאן הגדירו פרויקט מעשי קטן שתרצו להתנסות בו", time: "טווח זמן משוער" },
+      { label: "כאן הגדירו פרויקט מעשי בינוני שתרצו להתנסות בו", time: "טווח זמן משוער" },
+      { label: "אילו בעיות מופיעות כשהמערכת גדלה", time: "טווח זמן משוער" },
+      { label: "עקרונות בסיסיים של ביצועים ויציבות", time: "טווח זמן משוער" },
+      { label: "Trade-offs בין פשטות, סקייל ותחזוקה", time: "טווח זמן משוער" },
     ],
   },
   {
@@ -79,34 +47,62 @@ const roadmapSections = [
     estimate: "⏱️ כאן הזינו הערכת זמן כוללת לשלב זה",
     color: "from-orange-500 to-amber-500",
     items: [
-      {
-        label: "מה כל אחד צריך לדעת להסביר בראיון טכני",
-        time: "טווח זמן משוער",
-      },
-      {
-        label: "אילו סוגי שאלות מקצועיות צפויות",
-        time: "טווח זמן משוער",
-      },
-      {
-        label: "אילו פרויקטים ניתן להציג ולהגן עליהם",
-        time: "טווח זמן משוער",
-      },
+      { label: "מה כל אחד צריך לדעת להסביר בראיון טכני", time: "טווח זמן משוער" },
+      { label: "אילו סוגי שאלות מקצועיות צפויות", time: "טווח זמן משוער" },
+      { label: "אילו פרויקטים ניתן להציג ולהגן עליהם", time: "טווח זמן משוער" },
     ],
   },
 ];
 
-export default function Home() {
-  return (
-    <main className="page">
-      {/* ניווט חזרה */}
-      <Link href="/" className="nav">
-        ← חזרה ל-Team Working Agreement
-      </Link>
+export default function Roadmap() {
+  const [data, setData] = useState({});
+  const containerRef = useRef(null);
 
+  // טעינת נתונים מ-LocalStorage
+  useEffect(() => {
+    const saved = localStorage.getItem("roadmapData");
+    if (saved) setData(JSON.parse(saved));
+  }, []);
+
+  // עדכון נתונים ושמירה ב-LocalStorage
+  const update = (key, field, value) => {
+    setData((prev) => {
+      const newData = {
+        ...prev,
+        [key]: {
+          checked: field === "checked" ? value : prev[key]?.checked || false,
+          text: field === "text" ? value : prev[key]?.text || "",
+        },
+      };
+      localStorage.setItem("roadmapData", JSON.stringify(newData));
+      return newData;
+    });
+  };
+
+  // הורדת PDF
+  const downloadPDF = async () => {
+    if (!containerRef.current) return;
+    const canvas = await html2canvas(containerRef.current, { scale: 2 });
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "pt", "a4");
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    pdf.save("roadmap.pdf");
+  };
+
+  return (
+    <main className="page" ref={containerRef}>
       <h1>🧭 Roadmap Template לצוותי פיתוח</h1>
-      <p className="subtitle">
-        ארבעה שלבי התפתחות · כלי לדיון, תיאום והכוונה
-      </p>
+      <p className="subtitle">ארבעה שלבי התפתחות · כלי לדיון, תיאום והכוונה</p>
+
+      <div className="buttons">
+        <Link href="/" className="nav">
+          ← חזרה לעמוד הסכם צוות
+        </Link>
+        <button onClick={downloadPDF}>⬇️ הורד PDF</button>
+      </div>
 
       <div className="timeline">
         {roadmapSections.map((sec) => (
@@ -117,12 +113,27 @@ export default function Home() {
             </div>
 
             <div className="items">
-              {sec.items.map((item, i) => (
-                <div key={i} className="item">
-                  <span>{item.label}</span>
-                  <em>{item.time}</em>
-                </div>
-              ))}
+              {sec.items.map((item, i) => {
+                const id = `${sec.id}-${i}`;
+                const state = data[id] || { checked: false, text: "" };
+                return (
+                  <div key={id} className="item">
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={state.checked}
+                        onChange={(e) => update(id, "checked", e.target.checked)}
+                      />
+                      {item.label}
+                    </label>
+                    <textarea
+                      placeholder="הוסיפו הערות / החלטות / פירוט…"
+                      value={state.text}
+                      onChange={(e) => update(id, "text", e.target.value)}
+                    />
+                  </div>
+                );
+              })}
             </div>
           </section>
         ))}
@@ -136,11 +147,11 @@ export default function Home() {
           color: white;
         }
 
-        .nav {
-          display: inline-block;
+        .buttons {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
           margin-bottom: 2rem;
-          color: #93c5fd;
-          font-size: 0.9rem;
         }
 
         h1 {
@@ -152,7 +163,11 @@ export default function Home() {
         .subtitle {
           text-align: center;
           color: #c7d2fe;
-          margin-bottom: 4rem;
+          margin-bottom: 3rem;
+        }
+
+        .nav {
+          color: #93c5fd;
         }
 
         .timeline {
@@ -199,28 +214,41 @@ export default function Home() {
           border-radius: 14px;
           padding: 1rem 1.2rem;
           display: flex;
-          justify-content: space-between;
-          gap: 1rem;
-          transition: transform 0.25s ease, background 0.25s ease;
+          flex-direction: column;
+          gap: 0.5rem;
         }
 
-        .item:hover {
-          transform: translateY(-4px) scale(1.01);
-          background: rgba(255, 255, 255, 0.14);
-        }
-
-        .item span {
+        .item label {
+          display: flex;
+          gap: 0.6rem;
           font-size: 0.95rem;
         }
 
-        .item em {
-          font-size: 0.8rem;
-          color: #e0e7ff;
-          white-space: nowrap;
+        .item textarea {
+          width: 100%;
+          min-height: 60px;
+          border-radius: 8px;
+          padding: 0.5rem;
+          background: rgba(0, 0, 0, 0.4);
+          color: white;
+          border: none;
         }
 
         .bg-gradient {
           background: linear-gradient(135deg, var(--tw-gradient-stops));
+        }
+
+        button {
+          padding: 0.5rem 1rem;
+          border: none;
+          border-radius: 6px;
+          background: #3b82f6;
+          color: white;
+          cursor: pointer;
+        }
+
+        button:hover {
+          background: #2563eb;
         }
       `}</style>
     </main>
