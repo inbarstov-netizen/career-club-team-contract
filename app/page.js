@@ -76,14 +76,14 @@ const sections = [
 ];
 
 export default function Home() {
-  const [data, setData] = useState<Record<string, { checked: boolean; text: string }>>({});
+  const [data, setData] = useState({});
 
-  const update = (key: string, field: "checked" | "text", value: any) => {
+  const update = (key, field, value) => {
     setData((prev) => ({
       ...prev,
       [key]: {
-        checked: field === "checked" ? value : prev[key]?.checked ?? false,
-        text: field === "text" ? value : prev[key]?.text ?? "",
+        checked: field === "checked" ? value : prev[key]?.checked || false,
+        text: field === "text" ? value : prev[key]?.text || "",
       },
     }));
   };
@@ -91,7 +91,9 @@ export default function Home() {
   return (
     <main className="page">
       <h1>🤝 Team Working Agreement</h1>
-      <p className="subtitle">מסמך חי להגדרת סטנדרטים, עקרונות והסכמות עבודה</p>
+      <p className="subtitle">
+        מסמך חי להגדרת סטנדרטים, עקרונות והסכמות עבודה
+      </p>
 
       <Link href="/roadmap" className="nav">
         מעבר ל-Roadmap הלימודי →
@@ -111,7 +113,9 @@ export default function Home() {
                   <input
                     type="checkbox"
                     checked={state.checked}
-                    onChange={(e) => update(id, "checked", e.target.checked)}
+                    onChange={(e) =>
+                      update(id, "checked", e.target.checked)
+                    }
                   />
                   {item}
                 </label>
@@ -119,7 +123,9 @@ export default function Home() {
                 <textarea
                   placeholder="כתבו כאן החלטות / הערות / ניסוח מוסכם…"
                   value={state.text}
-                  onChange={(e) => update(id, "text", e.target.value)}
+                  onChange={(e) =>
+                    update(id, "text", e.target.value)
+                  }
                 />
               </div>
             );
@@ -133,47 +139,56 @@ export default function Home() {
           background: #020617;
           color: white;
         }
+
         h1 {
           text-align: center;
           font-size: 2.5rem;
         }
+
         .subtitle {
           text-align: center;
           color: #c7d2fe;
           margin-bottom: 1.5rem;
         }
+
         .nav {
           display: block;
           text-align: center;
           margin-bottom: 3rem;
           color: #93c5fd;
         }
+
         .section {
           max-width: 900px;
           margin: 0 auto 3rem;
         }
+
         h2 {
           margin-bottom: 1rem;
         }
+
         .item {
-          background: rgba(255,255,255,0.08);
+          background: rgba(255, 255, 255, 0.08);
           border-radius: 12px;
           padding: 1rem;
           margin-bottom: 1rem;
         }
+
         label {
           display: flex;
           gap: 0.6rem;
           font-size: 0.95rem;
         }
+
         textarea {
           margin-top: 0.6rem;
           width: 100%;
           min-height: 70px;
           border-radius: 8px;
           padding: 0.5rem;
-          background: rgba(0,0,0,0.4);
+          background: rgba(0, 0, 0, 0.4);
           color: white;
+          border: none;
         }
       `}</style>
     </main>
