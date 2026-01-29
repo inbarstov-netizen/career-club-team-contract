@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import React from "react";
+import Link from "next/link";
 
 const roadmapSections = [
   {
@@ -11,74 +11,64 @@ const roadmapSections = [
     color: "from-indigo-500 to-violet-500",
     items: [
       {
-        label:
-          "כאן הגדירו ידע בסיסי שכל חברי הצוות חייבים לחלוק",
+        label: "כאן הגדירו ידע בסיסי שכל חברי הצוות חייבים לחלוק",
         time: "טווח זמן משוער",
       },
       {
-        label:
-          "כאן הגדירו הבנה בסיסית של התחום או המערכת",
+        label: "כאן הגדירו הבנה בסיסית של התחום או המערכת",
         time: "טווח זמן משוער",
       },
       {
-        label:
-          "כאן סמנו פערים קריטיים שחייבים להיסגר מוקדם",
+        label: "כאן סמנו פערים קריטיים שחייבים להיסגר מוקדם",
         time: "טווח זמן משוער",
       },
     ],
   },
-    {
+  {
     id: "team",
     title: "Milestone 2 – Team Skills | מיומנויות צוות",
     estimate: "⏱️ כאן הזינו הערכת זמן כוללת לשלב זה",
     color: "from-emerald-500 to-teal-500",
     items: [
       {
-        label:
-          "כאן הגדירו איך הצוות עובד יחד ביום־יום",
+        label: "כאן הגדירו איך הצוות עובד יחד ביום־יום",
         time: "טווח זמן משוער",
       },
       {
-        label:
-          "כאן הגדירו תהליכי משוב, שיתוף וקבלת החלטות",
+        label: "כאן הגדירו תהליכי משוב, שיתוף וקבלת החלטות",
         time: "טווח זמן משוער",
       },
       {
-        label:
-          "כאן הגדירו כלי תקשורת וניהול עבודה",
+        label: "כאן הגדירו כלי תקשורת וניהול עבודה",
         time: "טווח זמן משוער",
       },
     ],
   },
-    {
+  {
     id: "professional",
-    title: "Milestone 3 – Projects & Professional Level | פרוייקטים מעשיים & רמה מקצועית",
+    title:
+      "Milestone 3 – Projects & Professional Level | פרוייקטים מעשיים & רמה מקצועית",
     estimate: "⏱️ כאן הזינו הערכת זמן כוללת לשלב זה",
     color: "from-fuchsia-500 to-pink-500",
     items: [
-       {
-        label:
-          "כאן הגדירו פרויקט מעשי קטן שתרצו להתנסות בו",
-        time: "טווח זמן משוער",
-      },
-       {
-        label:
-          "כאן הגדירו פרויקט מעשי בינוני שתרצו להתנסות בו",
-        time: "טווח זמן משוער",
-      },
-       {
-        label:
-          "אילו בעיות מופיעות כשהמערכת גדלה",
+      {
+        label: "כאן הגדירו פרויקט מעשי קטן שתרצו להתנסות בו",
         time: "טווח זמן משוער",
       },
       {
-        label:
-          "עקרונות בסיסיים של ביצועים ויציבות",
+        label: "כאן הגדירו פרויקט מעשי בינוני שתרצו להתנסות בו",
         time: "טווח זמן משוער",
       },
       {
-        label:
-          "Trade-offs בין פשטות, סקייל ותחזוקה",
+        label: "אילו בעיות מופיעות כשהמערכת גדלה",
+        time: "טווח זמן משוער",
+      },
+      {
+        label: "עקרונות בסיסיים של ביצועים ויציבות",
+        time: "טווח זמן משוער",
+      },
+      {
+        label: "Trade-offs בין פשטות, סקייל ותחזוקה",
         time: "טווח זמן משוער",
       },
     ],
@@ -90,18 +80,15 @@ const roadmapSections = [
     color: "from-orange-500 to-amber-500",
     items: [
       {
-        label:
-          "מה כל אחד צריך לדעת להסביר בראיון טכני",
+        label: "מה כל אחד צריך לדעת להסביר בראיון טכני",
         time: "טווח זמן משוער",
       },
       {
-        label:
-          "אילו סוגי שאלות מקצועיות צפויות",
+        label: "אילו סוגי שאלות מקצועיות צפויות",
         time: "טווח זמן משוער",
       },
       {
-        label:
-          "אילו פרויקטים ניתן להציג ולהגן עליהם",
+        label: "אילו פרויקטים ניתן להציג ולהגן עליהם",
         time: "טווח זמן משוער",
       },
     ],
@@ -111,6 +98,11 @@ const roadmapSections = [
 export default function Home() {
   return (
     <main className="page">
+      {/* ניווט חזרה */}
+      <Link href="/" className="nav">
+        ← חזרה ל-Team Working Agreement
+      </Link>
+
       <h1>🧭 Roadmap Template לצוותי פיתוח</h1>
       <p className="subtitle">
         ארבעה שלבי התפתחות · כלי לדיון, תיאום והכוונה
@@ -142,6 +134,13 @@ export default function Home() {
           padding: 4rem 1.5rem;
           background: radial-gradient(circle at top, #0f172a, #020617);
           color: white;
+        }
+
+        .nav {
+          display: inline-block;
+          margin-bottom: 2rem;
+          color: #93c5fd;
+          font-size: 0.9rem;
         }
 
         h1 {
@@ -227,7 +226,3 @@ export default function Home() {
     </main>
   );
 }
-
-<Link href="/" style={{ color: "#93c5fd", display: "block", marginBottom: "2rem" }}>
-  ← חזרה ל-Team Working Agreement
-</Link>
