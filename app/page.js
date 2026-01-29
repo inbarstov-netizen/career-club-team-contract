@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 const sections = [
   {
@@ -77,27 +79,55 @@ const sections = [
 
 export default function Home() {
   const [data, setData] = useState({});
+  const containerRef = useRef(null);
 
+  // טען נתונים מ-LocalStorage כשנכנסים לעמוד
+  useEffect(() => {
+    const saved = localStorage.getItem("teamAgreementData");
+    if (saved) setData(JSON.parse(saved));
+  }, []);
+
+  // עדכון הנתונים ושמירה אוטומטית ב-LocalStorage
   const update = (key, field, value) => {
-    setData((prev) => ({
-      ...prev,
-      [key]: {
-        checked: field === "checked" ? value : prev[key]?.checked || false,
-        text: field === "text" ? value : prev[key]?.text || "",
-      },
-    }));
+    setData((prev) => {
+      const newData = {
+        ...prev,
+        [key]: {
+          checked: field === "checked" ? value : prev[key]?.checked || false,
+          text: field === "text" ? value : prev[key]?.text || "",
+        },
+      };
+      localStorage.setItem("teamAgreementData", JSON.stringify(newData));
+      return newData;
+    });
+  };
+
+  // יצירת PDF מהעמוד
+  const downloadPDF = async () => {
+    if (!containerRef.current) return;
+    const canvas = await html2canvas(containerRef.current, { scale: 2 });
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "pt", "a4");
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    pdf.save("team_agreement.pdf");
   };
 
   return (
-    <main className="page">
+    <main className="page" ref={containerRef}>
       <h1>🤝 Team Working Agreement</h1>
       <p className="subtitle">
         מסמך חי להגדרת סטנדרטים, עקרונות והסכמות עבודה
       </p>
 
-      <Link href="/roadmap" className="nav">
-        מעבר ל-Roadmap הלימודי →
-      </Link>
+      <div className="buttons">
+        <Link href="/roadmap" className="nav">
+          מעבר ל-Roadmap הלימודי →
+        </Link>
+        <button onClick={downloadPDF}>⬇️ הורד PDF</button>
+      </div>
 
       {sections.map((sec) => (
         <section key={sec.id} className="section">
@@ -113,9 +143,7 @@ export default function Home() {
                   <input
                     type="checkbox"
                     checked={state.checked}
-                    onChange={(e) =>
-                      update(id, "checked", e.target.checked)
-                    }
+                    onChange={(e) => update(id, "checked", e.target.checked)}
                   />
                   {item}
                 </label>
@@ -123,9 +151,7 @@ export default function Home() {
                 <textarea
                   placeholder="כתבו כאן החלטות / הערות / ניסוח מוסכם…"
                   value={state.text}
-                  onChange={(e) =>
-                    update(id, "text", e.target.value)
-                  }
+                  onChange={(e) => update(id, "text", e.target.value)}
                 />
               </div>
             );
@@ -140,6 +166,13 @@ export default function Home() {
           color: white;
         }
 
+        .buttons {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 2rem;
+        }
+
         h1 {
           text-align: center;
           font-size: 2.5rem;
@@ -152,9 +185,6 @@ export default function Home() {
         }
 
         .nav {
-          display: block;
-          text-align: center;
-          margin-bottom: 3rem;
           color: #93c5fd;
         }
 
@@ -189,6 +219,19 @@ export default function Home() {
           background: rgba(0, 0, 0, 0.4);
           color: white;
           border: none;
+        }
+
+        button {
+          padding: 0.5rem 1rem;
+          border: none;
+          border-radius: 6px;
+          background: #3b82f6;
+          color: white;
+          cursor: pointer;
+        }
+
+        button:hover {
+          background: #2563eb;
         }
       `}</style>
     </main>
