@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Team Agreement Guide</title>
+
+  <!-- React -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+  <!-- PDF -->
+  <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #020617;
+      color: #e5e7eb;
+    }
+
+    a {
+      color: #60a5fa;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .card {
+      background: #0f172a;
+      border-radius: 16px;
+      padding: 2rem;
+      max-width: 900px;
+      margin: 2rem auto;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    h2 {
+      color: #facc15;
+      margin-bottom: 0.5rem;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+    }
+
+    input[type="checkbox"] {
+      transform: scale(1.2);
+      accent-color: #3b82f6;
+      cursor: pointer;
+    }
+
+    button {
+      background: #3b82f6;
+      border: none;
+      border-radius: 10px;
+      padding: 0.6rem 1.4rem;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      margin: 1rem 0;
+    }
+
+    button:hover {
+      background: #2563eb;
+    }
+
+    .section {
+      margin-top: 2rem;
+      border-top: 1px solid #1e293b;
+      padding-top: 1.5rem;
+    }
+  </style>
+</head>
+
+<body>
+<div id="root"></div>
+
+<script type="text/javascript">
+const { useRef, useState, useEffect } = React;
+const { jsPDF } = window.jspdf;
+
+function Guide() {
+  const containerRef = useRef(null);
+  const [checked, setChecked] = useState({});
+
+  useEffect(() => {
+    const saved = localStorage.getItem("guideChecks");
+    if (saved) setChecked(JSON.parse(saved));
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("guideChecks", JSON.stringify(checked));
+  }, [checked]);
+
+  const toggle = (key) =>
+    setChecked(prev => ({ ...prev, [key]: !prev[key] }));
+
+  const guideSections = [
+    {
+      title: "1️⃣ יצירת רפוזיטורי חדש",
+      items: [
+        {
+          text: "עברו לטמפלט ב-GitHub",
+          link: "https://github.com/inbarstov-netizen/career-club-team-contract"
+        },
+        { text: "Use this template → תנו שם לפרויקט" },
+        { text: "בחרו Public / Private לפי הצורך" }
+      ]
+    },
+    {
+      title: "2️⃣ חיבור ל-Vercel",
+      items: [
+        { text: "צרו חשבון ב-Vercel" },
+        { text: "התחברו ל-GitHub" },
+        { text: "New Project → בחרו ברפוזיטורי" },
+        { text: "Vercel יבנה ויפרסם את האתר אוטומטית" }
+      ]
+    },
+    {
+      title: "3️⃣ מילוי הטופס",
+      items: [
+        { text: "app/page.js הוא טמפלט לעריכה" },
+        { text: "סמנו checkboxes וכתבו ב-textarea" },
+        { text: "המידע נשמר ב-LocalStorage" },
+        { text: "דיון צוותי → החלפת PDF" }
+      ]
+    },
+    {
+      title: "4️⃣ הורדת PDF",
+      items: [
+        { text: "לחצו על ⬇️ הורד PDF" },
+        { text: "שמרו ושלחו לשאר הצוות" }
+      ]
+    },
+    {
+      title: "⚠️ נקודות חשובות",
+      items: [
+        { text: "הנתונים נשמרים מקומית בלבד" },
+        { text: "שינויים בקוד דורשים build חדש" }
+      ]
+    }
+  ];
+
+  const downloadPDF = async () => {
+    const canvas = await html2canvas(containerRef.current, { scale: 2 });
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "pt", "a4");
+    const width = pdf.internal.pageSize.getWidth();
+    const height = (canvas.height * width) / canvas.width;
+    pdf.addImage(imgData, "PNG", 0, 0, width, height);
+    pdf.save("team_agreement_guide.pdf");
+  };
+
+  return (
+    React.createElement("div", { ref: containerRef, className: "card" },
+      React.createElement("h1", null, "📘 Cheat Sheet – הסכם צוות"),
+      React.createElement("p", null, "מדריך שימוש בטמפלט GitHub + Vercel"),
+      React.createElement("button", { onClick: downloadPDF }, "⬇️ הורד PDF"),
+
+      guideSections.map((sec, i) =>
+        React.createElement("div", { key: i, className: "section" },
+          React.createElement("h2", null, sec.title),
+          React.createElement("ul", null,
+            sec.items.map((item, j) => {
+              const key = `${i}-${j}`;
+              return React.createElement("li", { key },
+                React.createElement("input", {
+                  type: "checkbox",
+                  checked: !!checked[key],
+                  onChange: () => toggle(key)
+                }),
+                item.link
+                  ? React.createElement("a", { href: item.link, target: "_blank" }, item.text)
+                  : item.text
+              );
+            })
+          )
+        )
+      )
+    )
+  );
+}
+
+ReactDOM.render(React.createElement(Guide), document.getElementById("root"));
+</script>
+</body>
+</html>
